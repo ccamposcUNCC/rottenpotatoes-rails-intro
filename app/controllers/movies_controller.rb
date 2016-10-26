@@ -12,14 +12,18 @@ class MoviesController < ApplicationController
 
   def index
     
-    if (Movie.column_names.include?(params[:sort]))
-      @sort_column = params[:sort]
-      @movies = Movie.order(params[:sort])
-    else
-      @movies = Movie.all
+    @movies = Movie.order(params[:sort])
+    if params[:ratings]
+      @movies = Movie.where(:rating => params[:ratings].keys).order(params[:sort])
     end
-    
+    @sort_column = params[:sort]
     @all_ratings = Movie.ratings
+    @set_ratings = params[:ratings]
+    @selected_ratings = (params[:ratings].present? ? params[:ratings] : [])
+    unless @set_ratings
+      @set_ratings = Hash.new
+      @selected_ratings = @all_ratings
+    end
       
   end
 
